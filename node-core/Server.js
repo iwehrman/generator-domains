@@ -23,7 +23,6 @@
 
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, indent: 4,
 maxerr: 50, node: true */
-/*global */
 
 (function () {
     "use strict";
@@ -34,7 +33,7 @@ maxerr: 50, node: true */
     /** @define{number} Number of ms between pings to parent process */
     var PING_DELAY = 1000; // send ping to parent process every 1 second
     
-    var fs                = require("fs"),
+    var url               = require("url"),
         http              = require("http"),
         WebSocket         = require("ws"),
         EventEmitter      = require("events").EventEmitter,
@@ -100,14 +99,23 @@ maxerr: 50, node: true */
      */
     function start() {
         function sendCommandToParentProcess() {
-            var cmd = "\n\n" + (_commandCount++) + "|"
-                + Array.prototype.join.call(arguments, "|") + "\n\n";
+            var cmd = "\n\n" + (_commandCount++) + "|" +
+                Array.prototype.join.call(arguments, "|") + "\n\n";
             process.stdout.write(cmd);
         }
         
         function httpRequestHandler(req, res) {
             if (req.method === "GET") {
                 if (req.url === "/api" || req.url.indexOf("/api/") === 0) {
+                    if (req.headers.origin) {
+                        // Allow requests from localhost on any port
+                        var origin = url.parse(req.headers.origin),
+                            port = origin.port || 80,
+                            host = origin.hostname === "localhost" ? "localhost" : "127.0.0.1";
+
+                        res.setHeader("Access-Control-Allow-Origin", origin.protocol + "//" + host + ":" + port);
+                    }
+
                     res.setHeader("Content-Type", "application/json");
                     res.end(
                         JSON.stringify(DomainManager.getDomainDescriptions(),
@@ -136,7 +144,7 @@ maxerr: 50, node: true */
             }
         
             // set up event handlers for stdin
-            process.stdin.on("data", function (data) {
+            process.stdin.on("data", function () {
                 // no-op, but make sure we read the data so the buffer 
                 // doesn't fill up
             });
@@ -242,8 +250,7 @@ maxerr: 50, node: true */
         setupHttpAndWebSocketServers(function (err, servers) {
             if (err) {
                 Logger.error(
-                    "[Server] stopping due to error while starting http/ws servers: "
-                        + err
+                    "[Server] stopping due to error while starting http/ws servers: " + err
                 );
                 stop();
             } else {
