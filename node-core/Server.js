@@ -245,8 +245,8 @@ maxerr: 50, node: true */
         
         // Do initialization
         Logger.info("[Server] beginning startup");
-        setupStdin();
-        setupStdout();
+        // setupStdin();
+        // setupStdout();
         setupHttpAndWebSocketServers(function (err, servers) {
             if (err) {
                 Logger.error(
@@ -258,7 +258,7 @@ maxerr: 50, node: true */
                 _httpServer = servers.httpServer;
                 _wsServer = servers.wsServer;
                 // tell the parent process what port we're on
-                sendCommandToParentProcess("port", servers.port);
+                // sendCommandToParentProcess("port", servers.port);
             }
         }, SETUP_TIMEOUT);
         DomainManager.loadDomainModulesFromPaths(["./BaseDomain"]);

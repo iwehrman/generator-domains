@@ -1,9 +1,11 @@
+/*jslint node: true*/
+
 (function () {
     "use strict";
 
-    var nodeCore = require("./node-core").createNodeCore();
+    var Server = require("./node-core/Server");
 
-    nodeCore.on("port", function (port) {
-        console.log("Port: ", port);
-    });
+    exports.init = function () {
+        Server.start();
+    };
 }());

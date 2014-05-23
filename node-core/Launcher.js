@@ -107,26 +107,26 @@ maxerr: 50, node: true */
         Server.start();
     }
     
-    if (!DEBUG_ON_LAUNCH) {
-        launch();
-    } else {
-        var noopTimer = setInterval(function () {
-            // no-op so that we don't exit the process
-        }, 100000);
+    // if (!DEBUG_ON_LAUNCH) {
+    //     launch();
+    // } else {
+    //     var noopTimer = setInterval(function () {
+    //         // no-op so that we don't exit the process
+    //     }, 100000);
 
-        // Inject a global so that user can call launch from the console
-        // The debugger won't stop at breakpoints if they're reached as a 
-        // direct result of evaluation of the console. So, we call launch()
-        // from a timer. This will allow hitting breakpoints set in launch()
-        // and in the functions it calls.
-        global.debugLaunch = function () {
-            process.nextTick(function () {
-                clearInterval(noopTimer);
-                launch();
-            });
-        };
-        process._debugProcess(process.pid);
-    }
+    //     // Inject a global so that user can call launch from the console
+    //     // The debugger won't stop at breakpoints if they're reached as a 
+    //     // direct result of evaluation of the console. So, we call launch()
+    //     // from a timer. This will allow hitting breakpoints set in launch()
+    //     // and in the functions it calls.
+    //     global.debugLaunch = function () {
+    //         process.nextTick(function () {
+    //             clearInterval(noopTimer);
+    //             launch();
+    //         });
+    //     };
+    //     process._debugProcess(process.pid);
+    // }
 
     // Set environment variable to use built-in Node.js API for temp directory
     if (!process.env["TMPDIR"] && !process.env["TMP"] && !process.env["TEMP"]) {
