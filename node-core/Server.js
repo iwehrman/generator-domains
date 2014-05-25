@@ -108,12 +108,20 @@ maxerr: 50, node: true */
             if (req.method === "GET") {
                 if (req.url === "/api" || req.url.indexOf("/api/") === 0) {
                     if (req.headers.origin) {
-                        // Allow requests from localhost on any port
-                        var origin = url.parse(req.headers.origin),
-                            port = origin.port || 80,
-                            host = origin.hostname === "localhost" ? "localhost" : "127.0.0.1";
+                        var allowed;
 
-                        res.setHeader("Access-Control-Allow-Origin", origin.protocol + "//" + host + ":" + port);
+                        if (req.headers.origin === "null") {
+                            allowed = "null";
+                        } else {
+                            // Allow requests from localhost on any port
+                            var origin = url.parse(req.headers.origin),
+                                port = origin.port || 80,
+                                host = origin.hostname === "localhost" ? "localhost" : "127.0.0.1";
+
+                            allowed = origin.protocol + "//" + host + ":" + port;
+                        }
+
+                        res.setHeader("Access-Control-Allow-Origin", allowed);
                     }
 
                     res.setHeader("Content-Type", "application/json");
