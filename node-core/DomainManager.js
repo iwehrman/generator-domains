@@ -164,7 +164,14 @@ maxerr: 50, node: true */
                         connection.sendCommandResponse(id, result);
                     }
                 };
+
+                var progress = function (intermediate) {
+                    connection.sendCommandProgress(id, intermediate);
+                };
+
                 parameters.push(callback);
+                parameters.push(progress);
+
                 command.commandFunction.apply(connection, parameters);
             } else { // synchronous command
                 try {
