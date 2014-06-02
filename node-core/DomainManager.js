@@ -159,7 +159,10 @@ maxerr: 50, node: true */
             if (command.isAsync) {
                 var callback = function (err, result) {
                     if (err) {
-                        connection.sendCommandError(id, err);
+                        var message = (err && err.hasOwnProperty("message")) ? err.message : err,
+                            stack = err && err.hasOwnProperty("stack") && err.stack;
+
+                        connection.sendCommandError(id, message, stack);
                     } else {
                         connection.sendCommandResponse(id, result);
                     }
@@ -180,7 +183,7 @@ maxerr: 50, node: true */
                         command.commandFunction.apply(connection, parameters)
                     );
                 } catch (e) {
-                    connection.sendCommandError(id, e.message);
+                    connection.sendCommandError(id, e.message, e.stack);
                 }
             }
         } else {
