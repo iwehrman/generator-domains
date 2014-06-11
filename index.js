@@ -5,7 +5,7 @@
 
     var Server = require("./node-core/Server");
 
-    exports.init = function () {
-        Server.start();
+    exports.init = function (generator) {
+        Server.start(generator);
     };
 }());

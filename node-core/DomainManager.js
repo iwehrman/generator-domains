@@ -23,13 +23,11 @@
 
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, indent: 4,
 maxerr: 50, node: true */
-/*global */
 
 (function () {
     "use strict";
         
     var util              = require("util"),
-        server            = require("./Server"),
         ConnectionManager = require("./ConnectionManager");
     
     /**
@@ -69,6 +67,12 @@ maxerr: 50, node: true */
      * API changes.
      */
     var _cachedDomainDescriptions = null;
+
+    /**
+     * @private
+     * @type {Generator}
+     */
+    var _generator = null;
     
     /**
      * Returns whether a domain with the specified name exists or not.
@@ -261,7 +265,7 @@ maxerr: 50, node: true */
         pathArray.forEach(function (path) {
             var m = require(path);
             if (m && m.init && _initializedDomainModules.indexOf(m) < 0) {
-                m.init(self);
+                m.init(self, _generator);
                 _initializedDomainModules.push(m); // don't init more than once
             }
         });
@@ -308,7 +312,15 @@ maxerr: 50, node: true */
         }
         return _cachedDomainDescriptions;
     }
+
+    /**
+     * @param {Generator}
+     */
+    function init(generator) {
+        _generator = generator;
+    }
     
+    exports.init                       = init;
     exports.hasDomain                  = hasDomain;
     exports.registerDomain             = registerDomain;
     exports.registerCommand            = registerCommand;

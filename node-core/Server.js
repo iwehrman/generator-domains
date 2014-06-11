@@ -97,7 +97,7 @@ maxerr: 50, node: true */
     /**
      * Starts the server.
      */
-    function start() {
+    function start(generator) {
         function sendCommandToParentProcess() {
             var cmd = "\n\n" + (_commandCount++) + "|" +
                 Array.prototype.join.call(arguments, "|") + "\n\n";
@@ -269,6 +269,7 @@ maxerr: 50, node: true */
                 // sendCommandToParentProcess("port", servers.port);
             }
         }, SETUP_TIMEOUT);
+        DomainManager.init(generator);
         DomainManager.loadDomainModulesFromPaths(["./BaseDomain"]);
         Logger.info("[Server] startup complete");
     }
