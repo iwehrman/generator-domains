@@ -110,8 +110,8 @@ maxerr: 50, node: true */
                     if (req.headers.origin) {
                         var allowed;
 
-                        if (req.headers.origin === "null") {
-                            allowed = "null";
+                        if (req.headers.origin === "null" || req.headers.origin === "file://") {
+                            allowed = req.headers.origin;
                         } else {
                             // Allow requests from localhost on any port
                             var origin = url.parse(req.headers.origin),
